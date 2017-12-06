@@ -3,23 +3,15 @@
 
 #include "MatrixTake4.h"
 
+// Allocate Matrix after construction time.
 void Matrix::set_size(int in_rows, int in_cols) {
   rows = in_rows;
   cols = in_cols;
+  // ... Handle memory allocation ...
   data = new double[rows * cols];
 }
 
-template <typename T1, typename T2>
-inline const Glue<T1, T2> operator+(const Base<T1> &A, const Base<T2> &B) {
-  return Glue<T1, T2>(A.get_ref(), B.get_ref());
-}
-
-// Need general copy constructor.
-template <typename T1, typename T2> Matrix::Matrix(const Glue<T1, T2> &X) {
-  std::cout << "Copy cons\n";
-  operator=(X);
-}
-
+// Manage adding all Matrices.
 template <typename T1, typename T2>
 const Matrix &Matrix::operator=(const Glue<T1, T2> &X) {
   int N = 1 + depth_lhs<Glue<T1, T2>>::num;
@@ -42,6 +34,19 @@ const Matrix &Matrix::operator=(const Glue<T1, T2> &X) {
   return *this;
 }
 
+// Create a Glue combining Matrices or Glues w/ polymorphism.
+template <typename T1, typename T2>
+inline const Glue<T1, T2> operator+(const Base<T1> &A, const Base<T2> &B) {
+  return Glue<T1, T2>(A.get_ref(), B.get_ref());
+}
+
+// Need general copy constructor.
+template <typename T1, typename T2> Matrix::Matrix(const Glue<T1, T2> &X) {
+  std::cout << "Copy cons\n";
+  operator=(X);
+}
+
+// Printer
 void dumpMat(Matrix &X) {
   for (int i = 0; i < X.rows * X.cols; i++) {
     std::cout << X.data[i] << " ";
@@ -121,9 +126,8 @@ void test3() {
 }
 
 int main() {
+  // Can add any number of matrices with no overhead.
   test1();
   test2();
   test3();
-  // Unfortunately, but it still sucks because we had to add special a case copy
-  // constructor and operator in the matrix class :(. What can we do?
 }
