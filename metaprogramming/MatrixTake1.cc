@@ -5,26 +5,33 @@
 
 class Matrix {
 public:
-  Matrix();                         // Default cons.
-  Matrix(int in_rows, int in_cols); // Parametrized cons.
-  Matrix(const Matrix &X);          // Copy cons.
 
+  // Default cons.
+  Matrix() { std::cout << "Default Constructor\n"; }
+
+
+  // Parameterized cons.
+  Matrix(int in_rows, int in_cols) : rows(in_rows), cols(in_cols) {
+    std::cout << "Parameterized Constructor\n";
+    data = new double[rows * cols];
+  }
+  void set_size(int in_rows, int in_cols);
+
+  // Copy cons.
+  // Matrix(const Matrix &X) { std::cout << "Copy Constructor\n"; }
+
+  // Copy operator.
   const Matrix &operator=(const Matrix &X);
 
-  Matrix operator+(const Matrix &B);
-
-  void set_size(int in_rows, int in_cols);
 
   int rows;
   int cols;
   double *data;
 };
 
-Matrix::Matrix() { std::cout << "Default Constructor\n"; }
 
-Matrix::Matrix(const Matrix &X) { std::cout << "Copy Constructor\n"; }
-
-const Matrix &Matrix::operator=(const Matrix &X) {
+const Matrix &
+Matrix::operator=(const Matrix &X) {
   std::cout << "Copy operator\n";
   rows = X.rows;
   cols = X.cols;
@@ -32,18 +39,15 @@ const Matrix &Matrix::operator=(const Matrix &X) {
   for (int i = 0; i < (rows * cols); i++) {
     data[i] = X.data[i];
   }
+  return *this;
 }
 
-Matrix::Matrix(int in_rows, int in_cols) : rows(in_rows), cols(in_cols) {
-  std::cout << "Parameterized Constructor\n";
-  data = new double[rows * cols];
-}
 
-Matrix Matrix::operator+(const Matrix &B) {
+Matrix operator+(const Matrix &A, const Matrix &B) {
   // ... Check dimenstions ...
-  Matrix X(rows, cols);
-  for (int i = 0; i < rows * cols; ++i) {
-    X.data[i] = data[i] + B.data[i];
+  Matrix X(A.rows, A.cols);
+  for (int i = 0; i < A.rows * A.cols; ++i) {
+    X.data[i] = A.data[i] + B.data[i];
   }
   return X;
 }

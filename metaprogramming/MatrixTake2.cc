@@ -1,64 +1,50 @@
 // Citing:
 // http://conradsanderson.id.au/misc/sanderson_templates_lecture_uqcomp7305.pdf
 
-#include <iostream>
+#include "MatrixTake2.h"
 
-class Matrix {
-public:
-  Matrix();                         // Default cons.
-  Matrix(int in_rows, int in_cols); // Parametrized cons.
-  Matrix(const Matrix &X);          // Copy cons.
 
-  const Matrix &operator=(const Matrix &X);
-
-  Matrix operator+(const Matrix &B);
-
-  void set_size(int in_rows, int in_cols);
-
-  int rows;
-  int cols;
-  double *data;
-};
-
-Matrix::Matrix() { std::cout << "Default Constructor\n"; }
-
-Matrix::Matrix(const Matrix &X) { std::cout << "Copy Constructor\n"; }
-
-const Matrix &Matrix::operator=(const Matrix &X) {
-  std::cout << "Copy operator\n";
-  rows = X.rows;
-  cols = X.cols;
-  data = new double[rows * cols];
-  for (int i = 0; i < (rows * cols); i++) {
-    data[i] = X.data[i];
-  }
-}
-
-Matrix::Matrix(int in_rows, int in_cols) : rows(in_rows), cols(in_cols) {
-  std::cout << "Parameterized Constructor\n";
+void Matrix::set_size(int in_rows, int in_cols) {
+  rows = in_rows;
+  cols = in_cols;
   data = new double[rows * cols];
 }
 
-Matrix Matrix::operator+(const Matrix &B) {
-  // ... Check dimenstions ...
-  Matrix X(rows, cols);
-  for (int i = 0; i < rows * cols; ++i) {
-    X.data[i] = data[i] + B.data[i];
-  }
-  return X;
-}
+const Glue operator+(const Matrix& A, const Matrix& B) {
+  // Return result of running Glue constructor.
+  std::cout << "Create Glue from mats.\n";
 
-class Glue{
-public:
-  const Matrix& A;
-  const Matrix& B;
-
-  Glue(const Matrix& in_A, const Matrix& in_B) : A(in_A), B(in_B){}
-  // const Glue operator+(const Matrix& A, const Matrix& B){}
-};
-
-Glue operator+(const Matrix& A, const Matrix& B){
+  std::cout << "Mat1[0] = " << A.data[0] << "\n";
+  std::cout << "Mat2[0] = " << B.data[0] << "\n";
   return Glue(A,B);
+}
+
+// copy constructor Allows you to do: Matrix X = A + B;
+Matrix::Matrix(const Glue& X) {
+  std::cout << "Copy constructor Matrix = Glue\n";
+  operator=(X);
+}
+
+// copy operator
+const Matrix&
+Matrix::operator=(const Glue& X) {
+  std::cout << "Run copy operator \n";
+  const Matrix& A = X.A;
+  const Matrix& B = X.B;
+  // Assume this doesn't already have data.
+  set_size(A.rows, A.cols);
+
+  for(int i=0; i < A.rows * A.cols; ++i) {
+    data[i] = A.data[i] + B.data[i];
+  }
+  return *this;
+}
+
+void dumpMat(Matrix &X){
+  for (int i = 0; i < X.rows * X.cols; i++) {
+    std::cout << X.data[i] << " ";
+  }
+  std::cout << std::endl;
 }
 
 int main() {
@@ -68,20 +54,29 @@ int main() {
 
   Matrix A(rows, cols);
   Matrix B(rows, cols);
+  Matrix C(rows, cols);
 
   for (int i = 0; i < elems; i++) {
     A.data[i] = (double)i;
     B.data[i] = (double)i + 4;
+    C.data[i] = (double)i + 8;
   }
 
-  // This sucks becuse + operator makes a temporary and = copies it through.
-  // 2x as much memory as optimal and 2x as long (two linear traversals).
+  // A + B creates a const Glue
+  // = operator populates X it with result of addition of matrices pointed to by glue.
+  // No extra space or memory usage.
+  std::cout << "About to add 2 matrices \n\n";
+
   Matrix X;
   X = A + B;
 
   printf("X holds:\n");
-  for (int i = 0; i < elems; i++) {
-    std::cout << X.data[i] << " ";
-  }
-  std::cout << std::endl;
+  dumpMat(X);
+
+  // This still sucks because we make a temporary matrix for (A + B) to which we add C.
+  std::cout << "About to add 3 matrices \n\n";
+  X = A + B + C;
+  printf("X holds:\n");
+  dumpMat(X);
+
 }
