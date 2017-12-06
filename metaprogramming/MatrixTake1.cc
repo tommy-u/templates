@@ -5,10 +5,8 @@
 
 class Matrix {
 public:
-
   // Default cons.
   Matrix() { std::cout << "Default Constructor\n"; }
-
 
   // Parameterized cons.
   Matrix(int in_rows, int in_cols) : rows(in_rows), cols(in_cols) {
@@ -23,15 +21,12 @@ public:
   // Copy operator.
   const Matrix &operator=(const Matrix &X);
 
-
   int rows;
   int cols;
   double *data;
 };
 
-
-const Matrix &
-Matrix::operator=(const Matrix &X) {
+const Matrix &Matrix::operator=(const Matrix &X) {
   std::cout << "Copy operator\n";
   rows = X.rows;
   cols = X.cols;
@@ -41,7 +36,6 @@ Matrix::operator=(const Matrix &X) {
   }
   return *this;
 }
-
 
 Matrix operator+(const Matrix &A, const Matrix &B) {
   // ... Check dimenstions ...
