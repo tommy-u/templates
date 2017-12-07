@@ -1,5 +1,12 @@
 #include <iostream>
 
+#define USEDEBUG
+#ifdef USEDEBUG
+#define Debug(x) std::cout << x
+#else
+#define Debug(x) 
+#endif
+
 // Static polymorphism.
 // Base<T>::get_ref() gives us a reference to T.
 // Base<T> is a wrapper for T. T can be anything.
@@ -23,18 +30,16 @@ public:
 class Matrix : public Base<Matrix> {
 public:
   // Default cons.
-  Matrix() { std::cout << "Default Constructor\n"; }
+  Matrix() {
+    Debug("Default Constructor\n");
+  }
 
   // Parameterized cons.
   Matrix(int in_rows, int in_cols) : rows(in_rows), cols(in_cols) {
-    std::cout << "Parameterized Constructor\n";
+    Debug("Parameterized Constructor\n");
     data = new double[rows * cols];
   }
   void set_size(int in_rows, int in_cols);
-
-  // For the base case, 2 matrices.
-  Matrix(const Matrix &X) { std::cout << "Copy Constructor\n"; } // Copy cons.
-  const Matrix &operator=(const Matrix &X); // Copy operator.
 
   // Copy constructor.
   template <typename T1, typename T2> Matrix(const Glue<T1, T2> &x);
@@ -50,6 +55,7 @@ public:
 
 // These two structs are for getting the address of each matrix in a Glue
 // instance.
+// Can this work when the matrices are dynamically allocated?
 
 // Base case, 0th pointer is current matrix.
 template <typename T1> struct mat_ptrs {
@@ -71,11 +77,11 @@ template <typename T1, typename T2> struct mat_ptrs<Glue<T1, T2>> {
 };
 
 // The next two structs are for counting number matrix instances in a Glue type.
-// I don't understand this.
+// I didn't understand this until I realized that in C++, operator+() is left associative: A + B + C => (A + B) + C. This implicitly leads to a left recursive production rule, so nested Glue types will always look like: Glue<Glue<Glue<M, M>, M>, M>. As a result, to count the number of matrices, you only have to traverse to the left, as there is always just a matrix to the right.
 
 // Base case.
 template <typename T1> struct depth_lhs {
-  static const int num = 0; // Termination.
+  static const int num = 1; // Termination.
 };
 
 // Recurse.

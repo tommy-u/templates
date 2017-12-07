@@ -1,6 +1,5 @@
 // Citing:
 // http://conradsanderson.id.au/misc/sanderson_templates_lecture_uqcomp7305.pdf
-
 #include "MatrixTake4.h"
 
 // Allocate Matrix after construction time.
@@ -14,9 +13,9 @@ void Matrix::set_size(int in_rows, int in_cols) {
 // Manage adding all Matrices.
 template <typename T1, typename T2>
 const Matrix &Matrix::operator=(const Glue<T1, T2> &X) {
-  std::cout << "About to run copy operator\n";
+  Debug("About to run copy operator\n");
 
-  int N = 1 + depth_lhs<Glue<T1, T2>>::num;
+  int N = depth_lhs<Glue<T1, T2>>::num;
   const Matrix *ptrs[N];
   mat_ptrs<Glue<T1, T2>>::get_ptrs(ptrs, X);
 
@@ -39,26 +38,26 @@ const Matrix &Matrix::operator=(const Glue<T1, T2> &X) {
 // Create a Glue combining Matrices or Glues w/ polymorphism.
 template <typename T1, typename T2>
 inline const Glue<T1, T2> operator+(const Base<T1> &A, const Base<T2> &B) {
-  std::cout << "Addition operator \n";
+  Debug("Addition operator \n");
   return Glue<T1, T2>(A.get_ref(), B.get_ref());
 }
 
 // Need general copy constructor.
 template <typename T1, typename T2> Matrix::Matrix(const Glue<T1, T2> &X) {
-  std::cout << "Copy cons\n";
+  Debug("Copy cons\n");
   operator=(X);
 }
 
 // Printer
 void dumpMat(Matrix &X) {
   for (int i = 0; i < X.rows * X.cols; i++) {
-    std::cout << X.data[i] << " ";
+    Debug(X.data[i] << " ");
   }
-  std::cout << std::endl;
+  Debug(std::endl);
 }
 
 void test1() {
-  std::cout << "Example: Add 2 matrices \n\n";
+  Debug("Example: Add 2 matrices \n\n");
   int rows = 2;
   int cols = 2;
   int elems = rows * cols;
@@ -70,14 +69,15 @@ void test1() {
     B.data[i] = (double)i + 4;
   }
 
-  Matrix X = A + B;
+  Matrix X;
+  X = A + B;
 
-  std::cout << "X holds:\n";
+  Debug("X holds:\n");
   dumpMat(X);
 }
 
 void test2() {
-  std::cout << "\nExample: Add 3 matrices\n";
+  Debug("\nExample: Add 3 matrices\n");
   int rows = 2;
   int cols = 2;
   int elems = rows * cols;
@@ -95,12 +95,12 @@ void test2() {
   // We can now do this without a temporary matrix!
   Matrix X = A + B + C;
 
-  std::cout << "X holds:\n";
+  Debug("X holds:\n");
   dumpMat(X);
 }
 
 void test3() {
-  std::cout << "\nExample: Add a bunch of matrices\n";
+  Debug("\nExample: Add a bunch of matrices\n");
   int rows = 2;
   int cols = 2;
   int elems = rows * cols;
@@ -124,15 +124,11 @@ void test3() {
   // We can now do this without a temporary matrix!
   Matrix X = A + A + B + B + C + D + E + F;
 
-  std::cout << "X holds:\n";
+  Debug("X holds:\n");
   dumpMat(X);
 }
 
-int main() {
-  // Can add any number of matrices with no overhead.
-  // test1();
-  // test2();
-  // test3();
+void explore_glues(){
   int rows = 2;
   int cols = 2;
   int elems = rows * cols;
@@ -140,30 +136,21 @@ int main() {
   Matrix A(rows, cols);
   Matrix B(rows, cols);
 
-  std::cout <<  "Glues:\n";
+  Debug( "Glues:\n");
 
   Glue<Matrix, Matrix> MyGlue(A, B);
-  int N = 1 + depth_lhs<Glue<T1, T2>>::num;
-  // Explore Glues.
-  const Matrix *ptrs[N];
-  int N = 1 + depth_lhs<Glue<T1, T2>>::num;
-  std::cout << mat_ptrs<Glue<Matrix, Matrix>>::get_ptrs(ptrs, Glue(A,B)) << "  \n";
+
+  int N = depth_lhs<Glue<Matrix, Matrix>>::num;
+
+  Debug("N is: " << N << "\n");
 
 }
 
+int main() {
+  // Can add any number of matrices with no overhead.
+  test1();
+  test2();
+  test3();
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
