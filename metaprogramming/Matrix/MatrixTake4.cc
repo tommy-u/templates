@@ -18,6 +18,11 @@ const Matrix &Matrix::operator=(const Glue<T1, T2> &X) {
   int N = depth_lhs<Glue<T1, T2>>::num;
   const Matrix *ptrs[N];
   mat_ptrs<Glue<T1, T2>>::get_ptrs(ptrs, X);
+  Debug("ptrs are: \n");
+  for (int i = 0; i < N; i++) {
+    Debug( ptrs[i] <<  " ");
+  }
+  Debug("\n");
 
   int r = ptrs[0]->rows;
   int c = ptrs[0]->cols;
@@ -128,6 +133,28 @@ void test3() {
   dumpMat(X);
 }
 
+void test4() {
+  Debug("Example: Add 2 matrices dynamically allocated.\n\n");
+  int rows = 2;
+  int cols = 2;
+  int elems = rows * cols;
+  auto A = new Matrix(rows, cols);
+  auto B = new Matrix(rows, cols);
+
+  for (int i = 0; i < elems; i++) {
+    A->data[i] = (double)i;
+    B->data[i] = (double)i + 4;
+  }
+
+  Matrix X;
+  X = *A + *B;
+
+  Debug("X holds:\n");
+  dumpMat(X);
+  delete A;
+  delete B;
+}
+
 void explore_glues() {
   int rows = 2;
   int cols = 2;
@@ -148,6 +175,7 @@ void explore_glues() {
 int main() {
   // Can add any number of matrices with no overhead.
   test1();
-  test2();
-  test3();
+  // test2();
+  // test3();
+  test4();
 }
