@@ -128,7 +128,7 @@ void test3() {
   dumpMat(X);
 }
 
-void explore_glues(){
+void explore_glues() {
   int rows = 2;
   int cols = 2;
   int elems = rows * cols;
@@ -136,14 +136,13 @@ void explore_glues(){
   Matrix A(rows, cols);
   Matrix B(rows, cols);
 
-  Debug( "Glues:\n");
+  Debug("Glues:\n");
 
   Glue<Matrix, Matrix> MyGlue(A, B);
 
   int N = depth_lhs<Glue<Matrix, Matrix>>::num;
 
   Debug("N is: " << N << "\n");
-
 }
 
 int main() {
@@ -151,6 +150,4 @@ int main() {
   test1();
   test2();
   test3();
-
-
 }

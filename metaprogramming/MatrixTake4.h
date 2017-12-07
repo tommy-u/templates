@@ -4,7 +4,7 @@
 #ifdef USEDEBUG
 #define Debug(x) std::cout << x
 #else
-#define Debug(x) 
+#define Debug(x)
 #endif
 
 // Static polymorphism.
@@ -30,9 +30,7 @@ public:
 class Matrix : public Base<Matrix> {
 public:
   // Default cons.
-  Matrix() {
-    Debug("Default Constructor\n");
-  }
+  Matrix() { Debug("Default Constructor\n"); }
 
   // Parameterized cons.
   Matrix(int in_rows, int in_cols) : rows(in_rows), cols(in_cols) {
@@ -77,7 +75,12 @@ template <typename T1, typename T2> struct mat_ptrs<Glue<T1, T2>> {
 };
 
 // The next two structs are for counting number matrix instances in a Glue type.
-// I didn't understand this until I realized that in C++, operator+() is left associative: A + B + C => (A + B) + C. This implicitly leads to a left recursive production rule, so nested Glue types will always look like: Glue<Glue<Glue<M, M>, M>, M>. As a result, to count the number of matrices, you only have to traverse to the left, as there is always just a matrix to the right.
+// I didn't understand this until I realized that in C++, operator+() is left
+// associative: A + B + C => (A + B) + C. This implicitly leads to a left
+// recursive production rule, so nested Glue types will always look like:
+// Glue<Glue<Glue<M, M>, M>, M>. As a result, to count the number of matrices,
+// you only have to traverse to the left, as there is always just a matrix to
+// the right.
 
 // Base case.
 template <typename T1> struct depth_lhs {
