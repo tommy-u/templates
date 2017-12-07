@@ -14,6 +14,8 @@ void Matrix::set_size(int in_rows, int in_cols) {
 // Manage adding all Matrices.
 template <typename T1, typename T2>
 const Matrix &Matrix::operator=(const Glue<T1, T2> &X) {
+  std::cout << "About to run copy operator\n";
+
   int N = 1 + depth_lhs<Glue<T1, T2>>::num;
   const Matrix *ptrs[N];
   mat_ptrs<Glue<T1, T2>>::get_ptrs(ptrs, X);
@@ -37,6 +39,7 @@ const Matrix &Matrix::operator=(const Glue<T1, T2> &X) {
 // Create a Glue combining Matrices or Glues w/ polymorphism.
 template <typename T1, typename T2>
 inline const Glue<T1, T2> operator+(const Base<T1> &A, const Base<T2> &B) {
+  std::cout << "Addition operator \n";
   return Glue<T1, T2>(A.get_ref(), B.get_ref());
 }
 
@@ -127,7 +130,40 @@ void test3() {
 
 int main() {
   // Can add any number of matrices with no overhead.
-  test1();
-  test2();
-  test3();
+  // test1();
+  // test2();
+  // test3();
+  int rows = 2;
+  int cols = 2;
+  int elems = rows * cols;
+
+  Matrix A(rows, cols);
+  Matrix B(rows, cols);
+
+  std::cout <<  "Glues:\n";
+
+  Glue<Matrix, Matrix> MyGlue(A, B);
+  int N = 1 + depth_lhs<Glue<T1, T2>>::num;
+  // Explore Glues.
+  const Matrix *ptrs[N];
+  int N = 1 + depth_lhs<Glue<T1, T2>>::num;
+  std::cout << mat_ptrs<Glue<Matrix, Matrix>>::get_ptrs(ptrs, Glue(A,B)) << "  \n";
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
